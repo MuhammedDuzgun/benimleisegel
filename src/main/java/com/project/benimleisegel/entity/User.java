@@ -22,6 +22,10 @@ public class User {
     @Column(unique = true, nullable = false)
     private String phone;
 
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "vehicle_id")
+    private Vehicle vehicle;
+
     public User() {
     }
 
@@ -30,13 +34,15 @@ public class User {
                 String password,
                 String firstName,
                 String lastName,
-                String phone) {
+                String phone,
+                Vehicle vehicle) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
+        this.vehicle = vehicle;
     }
 
     public Long getId() {
@@ -85,5 +91,13 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
 }
