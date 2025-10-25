@@ -2,6 +2,7 @@ package com.project.benimleisegel.controller;
 
 import com.project.benimleisegel.request.LoginRequest;
 import com.project.benimleisegel.request.SignupRequest;
+import com.project.benimleisegel.response.JwtAuthResponse;
 import com.project.benimleisegel.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 
