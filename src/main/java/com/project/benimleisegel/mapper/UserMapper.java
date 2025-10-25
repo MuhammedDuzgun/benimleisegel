@@ -8,6 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMapper {
 
+    private final VehicleMapper vehicleMapper;
+
+    public UserMapper(VehicleMapper vehicleMapper) {
+        this.vehicleMapper = vehicleMapper;
+    }
+
     public User mapToUser(CreateUserRequest request) {
         User user = new User();
         user.setEmail(request.email());
@@ -25,6 +31,7 @@ public class UserMapper {
         userResponse.setFirstName(user.getFirstName());
         userResponse.setLastName(user.getLastName());
         userResponse.setPhone(user.getPhone());
+        userResponse.setVehicle(vehicleMapper.mapToVehicleResponse(user.getVehicle()));
         return userResponse;
     }
 

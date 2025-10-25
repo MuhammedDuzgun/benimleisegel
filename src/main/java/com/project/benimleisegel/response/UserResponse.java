@@ -7,6 +7,7 @@ public class UserResponse {
     private String firstName;
     private String lastName;
     private String phone;
+    private VehicleResponse vehicle;
 
     public UserResponse() {
     }
@@ -15,12 +16,13 @@ public class UserResponse {
                         String email,
                         String firstName,
                         String lastName,
-                        String phone) {
+                        String phone, VehicleResponse vehicle) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
+        this.vehicle = vehicle;
     }
 
     public Long getId() {
@@ -61,5 +63,13 @@ public class UserResponse {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public VehicleResponse getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(VehicleResponse vehicle) {
+        this.vehicle = vehicle;
     }
 }
