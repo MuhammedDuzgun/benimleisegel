@@ -9,6 +9,7 @@ import com.project.benimleisegel.repository.UserRepository;
 import com.project.benimleisegel.repository.VehicleRepository;
 import com.project.benimleisegel.request.CreateVehicleRequest;
 import com.project.benimleisegel.response.VehicleResponse;
+import com.project.benimleisegel.security.CustomUserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,31 +28,21 @@ public class VehicleService {
         this.vehicleMapper = vehicleMapper;
     }
 
-
-    //get users vehicle
-    //todo: email CustomUserDetails nesnesinden gelmeli
-    public VehicleResponse getUsersVehicle(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        if (user.getVehicle() == null) {
-            throw new ResourceNotFoundException("User does not have a vehicle");
-        }
-        return vehicleMapper.mapToVehicleResponse(user.getVehicle());
-    }
-
     //create vehicle
-    //todo: email CustomUserDetails nesnesinden gelmeli
     @Transactional
-    public VehicleResponse createVehicle(CreateVehicleRequest request) {
+    public VehicleResponse createVehicle(CustomUserDetails customUserDetails,
+                                         CreateVehicleRequest request) {
+        //get user
+        User user = userRepository.findByEmail(customUserDetails.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException
+                        ("User with email " + customUserDetails.getUsername() + " not found"));
+
         //check plate number
         if (vehicleRepository.existsByPlate(request.plate())) {
             throw new ResourceAlreadyExistsException("Plate " + request.plate() + " already exists");
         }
-        Vehicle vehicle = vehicleMapper.mapToVehicle(request);
 
-        //get user
-        User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new ResourceNotFoundException("User with email " + request.email() + " not found"));
+        Vehicle vehicle = vehicleMapper.mapToVehicle(request);
 
         vehicleRepository.save(vehicle);
 
@@ -62,12 +53,10 @@ public class VehicleService {
         return vehicleMapper.mapToVehicleResponse(vehicle);
     }
 
-
     //delete users vehicle
-    //todo: email CustomUserDetails nesnesinden gelmeli
     @Transactional
-    public void deleteUsersVehicle(Long id) {
-        User user = userRepository.findById(id)
+    public void deleteUsersVehicle(CustomUserDetails customUserDetails) {
+        User user = userRepository.findByEmail(customUserDetails.getUsername())
                 .orElseThrow(()-> new ResourceNotFoundException("User not found"));
 
         //kullaniciya ait arac kaydi var mi
