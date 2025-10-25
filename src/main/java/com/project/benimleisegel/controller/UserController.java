@@ -1,13 +1,12 @@
 package com.project.benimleisegel.controller;
 
-import com.project.benimleisegel.request.CreateUserRequest;
 import com.project.benimleisegel.response.UserResponse;
+import com.project.benimleisegel.security.CustomUserDetails;
 import com.project.benimleisegel.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -25,22 +24,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    //get all users
-    @GetMapping
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
-
-    //create user
-    @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest request) {
-        return new ResponseEntity<>(userService.createUser(request), HttpStatus.CREATED);
-    }
-
     //delete user
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUserById(@PathVariable("id") Long id) {
-        userService.deleteUserById(id);
+    @DeleteMapping
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        userService.deleteUser(customUserDetails);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
