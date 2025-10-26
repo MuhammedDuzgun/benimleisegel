@@ -2,6 +2,9 @@ package com.project.benimleisegel.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "vehicles")
 public class Vehicle {
@@ -20,6 +23,13 @@ public class Vehicle {
 
     private String model;
 
+    @OneToMany(
+            mappedBy = "vehicle",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Ride> rides = new ArrayList<>();
+
     public Vehicle() {
     }
 
@@ -27,12 +37,14 @@ public class Vehicle {
                    User owner,
                    String plate,
                    String brand,
-                   String model) {
+                   String model,
+                   List<Ride> rides) {
         this.id = id;
         this.owner = owner;
         this.plate = plate;
         this.brand = brand;
         this.model = model;
+        this.rides = rides;
     }
 
     public Long getId() {
@@ -73,5 +85,13 @@ public class Vehicle {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public List<Ride> getRides() {
+        return rides;
+    }
+
+    public void setRides(List<Ride> rides) {
+        this.rides = rides;
     }
 }
