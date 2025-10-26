@@ -24,6 +24,13 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
+    //get authenticated user
+    @GetMapping
+    public ResponseEntity<UserResponse> getAuthenticatedUser
+        (@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return ResponseEntity.ok(userService.getAuthenticatedUser(customUserDetails));
+    }
+
     //delete user
     @DeleteMapping
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {

@@ -30,6 +30,15 @@ public class UserService {
         return userMapper.mapToUserResponse(user);
     }
 
+    //get authenticated user
+    public UserResponse getAuthenticatedUser(CustomUserDetails customUserDetails) {
+        User user = userRepository.findByEmail(customUserDetails.getUsername())
+                .orElseThrow(()-> new ResourceNotFoundException
+                        ("User with email " + customUserDetails.getUsername() + " not found"));
+
+        return userMapper.mapToUserResponse(user);
+    }
+
     //delete user
     @Transactional
     public void deleteUser(CustomUserDetails customUserDetails) {

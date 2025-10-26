@@ -31,7 +31,9 @@ public class UserMapper {
         userResponse.setFirstName(user.getFirstName());
         userResponse.setLastName(user.getLastName());
         userResponse.setPhone(user.getPhone());
-        userResponse.setVehicle(vehicleMapper.mapToVehicleResponse(user.getVehicle()));
+        if (user.getVehicle() != null) {
+            userResponse.setVehicle(vehicleMapper.mapToVehicleResponse(user.getVehicle()));
+        }
         return userResponse;
     }
 
