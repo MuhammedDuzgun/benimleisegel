@@ -6,6 +6,7 @@ import com.project.benimleisegel.repository.UserRepository;
 import com.project.benimleisegel.request.LoginRequest;
 import com.project.benimleisegel.request.SignupRequest;
 import com.project.benimleisegel.response.JwtAuthResponse;
+import com.project.benimleisegel.response.SignedUpResponse;
 import com.project.benimleisegel.security.JwtTokenProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -54,7 +55,7 @@ public class AuthService {
 
     //signup
     @Transactional
-    public String signup(SignupRequest request) {
+    public SignedUpResponse signup(SignupRequest request) {
         //check email
         if (userRepository.existsByEmail(request.email())) {
             throw new ResourceAlreadyExistsException("Email already exists");
@@ -74,7 +75,7 @@ public class AuthService {
 
         userRepository.save(user);
 
-        return "success";
+        return new SignedUpResponse("success");
     }
 
 }
