@@ -26,4 +26,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(ResourceNotBelongsToUserException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotBelongsToUserException
+            (ResourceNotBelongsToUserException ex) {
+        ErrorResponse response = new ErrorResponse();
+        response.setMessage(ex.getMessage());
+        response.setCode(HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 }
