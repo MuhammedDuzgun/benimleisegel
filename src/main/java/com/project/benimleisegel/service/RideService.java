@@ -1,0 +1,108 @@
+package com.project.benimleisegel.service;
+
+import com.project.benimleisegel.entity.Ride;
+import com.project.benimleisegel.entity.User;
+import com.project.benimleisegel.enums.RideStatus;
+import com.project.benimleisegel.exception.ResourceNotBelongsToUserException;
+import com.project.benimleisegel.exception.ResourceNotFoundException;
+import com.project.benimleisegel.mapper.RideMapper;
+import com.project.benimleisegel.repository.RideRepository;
+import com.project.benimleisegel.repository.UserRepository;
+import com.project.benimleisegel.request.CreateRideRequestAsDriver;
+import com.project.benimleisegel.request.UpdateRideStatusRequest;
+import com.project.benimleisegel.response.RideResponse;
+import com.project.benimleisegel.security.CustomUserDetails;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class RideService {
+
+    private final RideRepository rideRepository;
+    private final UserRepository userRepository;
+    private final RideMapper rideMapper;
+
+    public RideService(RideRepository rideRepository,
+                       UserRepository userRepository,
+                       RideMapper rideMapper) {
+        this.rideRepository = rideRepository;
+        this.userRepository = userRepository;
+        this.rideMapper = rideMapper;
+    }
+
+    //get all available rides
+    public List<RideResponse> getAllAvailableRides() {
+        return rideRepository.findByDepartTimeAfterAndStatus(LocalDateTime.now(), RideStatus.OPEN)
+                .stream()
+                .map(rideMapper::mapToRideResponse)
+                .toList();
+    }
+
+    //get authenticated users rides
+    public List<RideResponse> getRidesOfUser(CustomUserDetails customUserDetails) {
+        User user = userRepository.findByEmail(customUserDetails.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        return user.getRides()
+                .stream()
+                .map(rideMapper::mapToRideResponse)
+                .toList();
+    }
+
+    //create ride
+    @Transactional
+    public RideResponse createRide(CustomUserDetails customUserDetails,
+                                   CreateRideRequestAsDriver request) {
+        //user kontrolu
+        User driver = userRepository.findByEmail(customUserDetails.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        //user'a ait vehicle var mi
+        if (driver.getVehicle() == null) {
+            throw new ResourceNotFoundException("User doesnt have a vehicle");
+        }
+
+        Ride ride = new Ride();
+        ride.setDriver(driver);
+        ride.setVehicle(driver.getVehicle());
+        ride.setOriginCity(request.originCity());
+        ride.setOriginDistrict(request.originDistrict());
+        ride.setDestinationCity(request.destinationCity());
+        ride.setDestinationDistrict(request.destinationDistrict());
+        ride.setDepartTime(request.departTime());
+        ride.setPrice(request.price());
+        ride.setStatus(RideStatus.OPEN);
+
+        rideRepository.save(ride);
+
+        return rideMapper.mapToRideResponse(ride);
+    }
+
+    // update ride status
+    @Transactional
+    public RideResponse updateRideStatus(CustomUserDetails customUserDetails,
+                                         Long id,
+                                         UpdateRideStatusRequest request) {
+        //user kontrolu
+        User user = userRepository.findByEmail(customUserDetails.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        //ride
+        Ride rideToUpdate = rideRepository.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Ride not found"));
+
+        //user, bu ride icin driver rolunde mi
+        if (!rideToUpdate.getDriver().getId().equals(user.getId())) {
+            throw new ResourceNotBelongsToUserException("This ride not belong to you");
+        }
+
+        rideToUpdate.setStatus(request.status());
+        rideRepository.save(rideToUpdate);
+
+        return rideMapper.mapToRideResponse(rideToUpdate);
+    }
+
+}
