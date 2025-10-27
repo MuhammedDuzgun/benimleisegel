@@ -2,6 +2,7 @@ package com.project.benimleisegel.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -31,6 +32,15 @@ public class GlobalExceptionHandler {
             (ResourceNotBelongsToUserException ex) {
         ErrorResponse response = new ErrorResponse();
         response.setMessage(ex.getMessage());
+        response.setCode(HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleMessageNotReadableException
+            (ResourceNotBelongsToUserException ex) {
+        ErrorResponse response = new ErrorResponse();
+        response.setMessage("wrong format");
         response.setCode(HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
