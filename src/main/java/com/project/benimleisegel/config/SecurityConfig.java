@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> {
                     request.requestMatchers("/api/auth/**").permitAll();
                     request.requestMatchers("/api/users/{id}").permitAll();
+                    request.requestMatchers("/api/rides/available").permitAll();
                     request.anyRequest().authenticated();
                 })
                 .sessionManagement(

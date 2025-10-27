@@ -34,6 +34,7 @@ public class Ride {
 
     private BigDecimal price;
 
+    @Enumerated(EnumType.STRING)
     private RideStatus status;
 
     public Ride() {
