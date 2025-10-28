@@ -36,6 +36,13 @@ public class User {
     )
     private List<Ride> rides = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "guest",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<RideRequest> rideRequests = new ArrayList<>();
+
     public User() {
     }
 
@@ -46,7 +53,8 @@ public class User {
                 String lastName,
                 String phone,
                 Vehicle vehicle,
-                List<Ride> rides) {
+                List<Ride> rides,
+                List<RideRequest> rideRequests) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -55,6 +63,7 @@ public class User {
         this.phone = phone;
         this.vehicle = vehicle;
         this.rides = rides;
+        this.rideRequests = rideRequests;
     }
 
     public Long getId() {
@@ -119,5 +128,13 @@ public class User {
 
     public void setRides(List<Ride> rides) {
         this.rides = rides;
+    }
+
+    public List<RideRequest> getRideRequests() {
+        return rideRequests;
+    }
+
+    public void setRideRequests(List<RideRequest> rideRequests) {
+        this.rideRequests = rideRequests;
     }
 }

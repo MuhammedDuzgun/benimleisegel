@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "rides")
@@ -37,6 +39,13 @@ public class Ride {
     @Enumerated(EnumType.STRING)
     private RideStatus status;
 
+    @OneToMany(
+            mappedBy = "ride",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<RideRequest> rideRequests = new ArrayList<>();
+
     public Ride() {
     }
 
@@ -49,7 +58,8 @@ public class Ride {
                 String destinationDistrict,
                 LocalDateTime departTime,
                 BigDecimal price,
-                RideStatus status) {
+                RideStatus status,
+                List<RideRequest> rideRequests) {
         this.id = id;
         this.driver = driver;
         this.vehicle = vehicle;
@@ -60,6 +70,7 @@ public class Ride {
         this.departTime = departTime;
         this.price = price;
         this.status = status;
+        this.rideRequests = rideRequests;
     }
 
     public Long getId() {
@@ -140,5 +151,13 @@ public class Ride {
 
     public void setStatus(RideStatus status) {
         this.status = status;
+    }
+
+    public List<RideRequest> getRideRequests() {
+        return rideRequests;
+    }
+
+    public void setRideRequests(List<RideRequest> rideRequests) {
+        this.rideRequests = rideRequests;
     }
 }
