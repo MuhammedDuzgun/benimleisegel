@@ -44,4 +44,13 @@ public class GlobalExceptionHandler {
         response.setCode(HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(GeneralException.class)
+    public ResponseEntity<ErrorResponse> handleGeneralException
+            (GeneralException ex) {
+        ErrorResponse response = new ErrorResponse();
+        response.setMessage(ex.getMessage());
+        response.setCode(HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 }
