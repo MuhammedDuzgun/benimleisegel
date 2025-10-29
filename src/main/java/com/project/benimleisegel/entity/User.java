@@ -1,5 +1,6 @@
 package com.project.benimleisegel.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -43,6 +44,14 @@ public class User {
     )
     private List<RideRequest> rideRequests = new ArrayList<>();
 
+    @OneToMany(mappedBy = "rater", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference(value = "rater-ratings")
+    private List<Rate> givenRatings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "ratedUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference(value = "rated-ratings")
+    private List<Rate> receivedRatings = new ArrayList<>();
+
     public User() {
     }
 
@@ -54,7 +63,9 @@ public class User {
                 String phone,
                 Vehicle vehicle,
                 List<Ride> rides,
-                List<RideRequest> rideRequests) {
+                List<RideRequest> rideRequests,
+                List<Rate> givenRatings,
+                List<Rate> receivedRatings) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -64,6 +75,17 @@ public class User {
         this.vehicle = vehicle;
         this.rides = rides;
         this.rideRequests = rideRequests;
+        this.givenRatings = givenRatings;
+        this.receivedRatings = receivedRatings;
+    }
+
+    @Transient
+    public double getAverageRating() {
+        if (receivedRatings.isEmpty()) return 0;
+        return receivedRatings.stream()
+                .mapToInt(Rate::getScore)
+                .average()
+                .orElse(0);
     }
 
     public Long getId() {
@@ -136,5 +158,21 @@ public class User {
 
     public void setRideRequests(List<RideRequest> rideRequests) {
         this.rideRequests = rideRequests;
+    }
+
+    public List<Rate> getGivenRatings() {
+        return givenRatings;
+    }
+
+    public void setGivenRatings(List<Rate> givenRatings) {
+        this.givenRatings = givenRatings;
+    }
+
+    public List<Rate> getReceivedRatings() {
+        return receivedRatings;
+    }
+
+    public void setReceivedRatings(List<Rate> receivedRatings) {
+        this.receivedRatings = receivedRatings;
     }
 }

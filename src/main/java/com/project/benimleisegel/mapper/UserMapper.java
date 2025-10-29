@@ -34,6 +34,7 @@ public class UserMapper {
         if (user.getVehicle() != null) {
             userResponse.setVehicle(vehicleMapper.mapToVehicleResponse(user.getVehicle()));
         }
+        userResponse.setScore(user.getAverageRating());
         return userResponse;
     }
 
