@@ -9,9 +9,11 @@ import org.springframework.stereotype.Component;
 public class RateMapper {
 
     private final UserMapper userMapper;
+    private final RideMapper rideMapper;
 
-    public RateMapper(UserMapper userMapper) {
+    public RateMapper(UserMapper userMapper, RideMapper rideMapper) {
         this.userMapper = userMapper;
+        this.rideMapper = rideMapper;
     }
 
     public Rate mapToRate(CreateRateRequest request) {
@@ -27,6 +29,7 @@ public class RateMapper {
                 rate.getComment(),
                 userMapper.mapToUserResponse(rate.getRater()),
                 userMapper.mapToUserResponse(rate.getRatedUser()),
+                rideMapper.mapToRideResponse(rate.getRide()),
                 rate.getCreatedAt());
         return response;
     }

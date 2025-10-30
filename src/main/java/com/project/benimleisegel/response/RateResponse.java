@@ -8,6 +8,7 @@ public record RateResponse(
         String comment,
         UserResponse raterUser,
         UserResponse ratedUser,
+        RideResponse ride,
         LocalDateTime createdAt
 ) {
 }
