@@ -28,11 +28,18 @@ public class RideController {
         return ResponseEntity.ok(rideService.getAllAvailableRides());
     }
 
-    //get users rides
+    //get users rides as driver
     @GetMapping
     public ResponseEntity<List<RideResponse>> getRidesOfUser
         (@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return ResponseEntity.ok(rideService.getRidesOfUser(customUserDetails));
+    }
+
+    //get users rides as guest
+    @GetMapping("/as-guest")
+    public ResponseEntity<List<RideResponse>> getRidesOfUserAsGuest
+        (@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        return ResponseEntity.ok(rideService.getMyRidesAsGuest(customUserDetails));
     }
 
     //create ride
