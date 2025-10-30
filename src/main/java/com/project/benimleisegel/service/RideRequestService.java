@@ -4,6 +4,7 @@ import com.project.benimleisegel.entity.Ride;
 import com.project.benimleisegel.entity.RideRequest;
 import com.project.benimleisegel.entity.User;
 import com.project.benimleisegel.enums.RideRequestStatus;
+import com.project.benimleisegel.enums.RideStatus;
 import com.project.benimleisegel.exception.GeneralException;
 import com.project.benimleisegel.exception.ResourceNotBelongsToUserException;
 import com.project.benimleisegel.exception.ResourceNotFoundException;
@@ -79,6 +80,11 @@ public class RideRequestService {
         User user = userRepository.findByEmail(customUserDetails.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("user not found"));
 
+        //Bu ride user'ın kendisine mi ait
+        if (ride.getDriver().getId().equals(user.getId())) {
+            throw new GeneralException("Kendi yolculuğunuza talepte bulunamazsınız");
+        }
+
         //kullanıcı bu ride'a daha önce request'de bulunmus mu
         for (RideRequest rideRequest : ride.getRideRequests()) {
             if (rideRequest.getGuest().getId().equals(user.getId())) {
@@ -107,13 +113,39 @@ public class RideRequestService {
         RideRequest rideRequest = rideRequestRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("ride request not found"));
 
+        Ride ride = rideRequest.getRide();
+
         //ride request'in yapildiği ride user'a mı ait
         if (!rideRequest.getRide().getDriver().getId().equals(user.getId())) {
             throw new GeneralException("bu ride size ait degil");
         }
 
+        //ride completed durumunduysa taleplerin status'u guncellenemez
+        if (ride.getStatus().equals(RideStatus.COMPLETED)) {
+            throw new GeneralException("Tamamlanmış yolculuğun talepleri güncellenemez");
+        }
+
+        //kabul edilmiş veya reddedilmiş talepler güncellenmemeli
+        if (rideRequest.getStatus().equals(RideRequestStatus.ACCEPTED)
+            || rideRequest.getStatus().equals(RideRequestStatus.REJECTED)) {
+            throw new GeneralException("Daha önceden kabul edilmiş veya reddedilmiş taleplerin durumu güncellenemez");
+        }
+
         rideRequest.setStatus(request.status());
         rideRequestRepository.save(rideRequest);
+
+        //yeni status'a gore aksiyon al
+        if (request.status().equals(RideRequestStatus.ACCEPTED)) {
+            //ride'a ait guest'i ekle
+            ride.setGuest(rideRequest.getGuest());
+            rideRepository.save(ride);
+        } else if(request.status().equals(RideRequestStatus.REJECTED)) {
+            //eğer daha önceden kabul edilmişse guest user'ı ride'dan cikar
+            if (ride.getGuest() != null) {
+                ride.setGuest(null);
+                rideRepository.save(ride);
+            }
+        }
 
         return rideRequestMapper.mapToResponse(rideRequest);
     }
