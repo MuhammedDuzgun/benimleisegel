@@ -30,18 +30,15 @@ public class User {
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;
 
-    @OneToMany(
-            mappedBy = "driver",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference(value = "user-driver")
     private List<Ride> rides = new ArrayList<>();
 
-    @OneToMany(
-            mappedBy = "guest",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToMany(mappedBy = "guest", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference(value = "user-guest")
+    private List<Ride> ridesAsGuest = new ArrayList<>();
+
+    @OneToMany(mappedBy = "guest", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RideRequest> rideRequests = new ArrayList<>();
 
     @OneToMany(mappedBy = "rater", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -63,6 +60,7 @@ public class User {
                 String phone,
                 Vehicle vehicle,
                 List<Ride> rides,
+                List<Ride> ridesAsGuest,
                 List<RideRequest> rideRequests,
                 List<Rate> givenRatings,
                 List<Rate> receivedRatings) {
@@ -73,6 +71,7 @@ public class User {
         this.lastName = lastName;
         this.phone = phone;
         this.vehicle = vehicle;
+        this.ridesAsGuest = ridesAsGuest;
         this.rides = rides;
         this.rideRequests = rideRequests;
         this.givenRatings = givenRatings;
@@ -174,5 +173,13 @@ public class User {
 
     public void setReceivedRatings(List<Rate> receivedRatings) {
         this.receivedRatings = receivedRatings;
+    }
+
+    public List<Ride> getRidesAsGuest() {
+        return ridesAsGuest;
+    }
+
+    public void setRidesAsGuest(List<Ride> ridesAsGuest) {
+        this.ridesAsGuest = ridesAsGuest;
     }
 }

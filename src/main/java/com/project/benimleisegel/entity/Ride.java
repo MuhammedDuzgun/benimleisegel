@@ -1,5 +1,6 @@
 package com.project.benimleisegel.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.project.benimleisegel.enums.RideStatus;
 import jakarta.persistence.*;
 
@@ -18,7 +19,13 @@ public class Ride {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id")
+    @JsonBackReference(value = "user-driver")
     private User driver;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "guest_id")
+    @JsonBackReference(value = "user-guest")
+    private User guest;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_id")
@@ -46,11 +53,16 @@ public class Ride {
     )
     private List<RideRequest> rideRequests = new ArrayList<>();
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "rate_id")
+    private Rate rate;
+
     public Ride() {
     }
 
     public Ride(Long id,
                 User driver,
+                User guest,
                 Vehicle vehicle,
                 String originCity,
                 String originDistrict,
@@ -59,9 +71,11 @@ public class Ride {
                 LocalDateTime departTime,
                 BigDecimal price,
                 RideStatus status,
-                List<RideRequest> rideRequests) {
+                List<RideRequest> rideRequests,
+                Rate rate) {
         this.id = id;
         this.driver = driver;
+        this.guest = guest;
         this.vehicle = vehicle;
         this.originCity = originCity;
         this.originDistrict = originDistrict;
@@ -71,6 +85,7 @@ public class Ride {
         this.price = price;
         this.status = status;
         this.rideRequests = rideRequests;
+        this.rate = rate;
     }
 
     public Long getId() {
@@ -159,5 +174,21 @@ public class Ride {
 
     public void setRideRequests(List<RideRequest> rideRequests) {
         this.rideRequests = rideRequests;
+    }
+
+    public User getGuest() {
+        return guest;
+    }
+
+    public void setGuest(User guest) {
+        this.guest = guest;
+    }
+
+    public Rate getRate() {
+        return rate;
+    }
+
+    public void setRate(Rate rate) {
+        this.rate = rate;
     }
 }

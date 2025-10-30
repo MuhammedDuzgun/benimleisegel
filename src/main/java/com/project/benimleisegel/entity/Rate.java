@@ -28,6 +28,9 @@ public class Rate {
     @JsonBackReference(value = "rated-ratings")
     private User ratedUser;
 
+    @OneToOne(mappedBy = "rate")
+    private Ride ride;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -39,12 +42,14 @@ public class Rate {
                 String comment,
                 User rater,
                 User ratedUser,
+                Ride ride,
                 LocalDateTime createdAt) {
         this.id = id;
         this.score = score;
         this.comment = comment;
         this.rater = rater;
         this.ratedUser = ratedUser;
+        this.ride = ride;
         this.createdAt = createdAt;
     }
 
@@ -94,5 +99,13 @@ public class Rate {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Ride getRide() {
+        return ride;
+    }
+
+    public void setRide(Ride ride) {
+        this.ride = ride;
     }
 }
