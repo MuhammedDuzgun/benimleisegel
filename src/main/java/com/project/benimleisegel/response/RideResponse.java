@@ -7,11 +7,16 @@ import java.time.LocalDateTime;
 
 public record RideResponse(
         Long id,
+        String title,
         UserResponse driver,
-        String originCity,
-        String originDistrict,
-        String destinationCity,
-        String destinationDistrict,
+        String originAddress,
+        String destinationAddress,
+        double distanceInMeters,
+        double durationInSeconds,
+        double originLatitude,
+        double originLongitude,
+        double destinationLatitude,
+        double destinationLongitude,
         LocalDateTime departTime,
         BigDecimal price,
         RideStatus status
