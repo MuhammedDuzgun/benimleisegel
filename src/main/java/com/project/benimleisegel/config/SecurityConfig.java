@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> {
                     request.requestMatchers("/api/auth/**").permitAll();
+                    request.requestMatchers("/api/ai/**").permitAll();
                     request.requestMatchers("/api/users/{id}").permitAll();
                     request.requestMatchers("/api/rides/available").permitAll();
                     request.anyRequest().authenticated();
