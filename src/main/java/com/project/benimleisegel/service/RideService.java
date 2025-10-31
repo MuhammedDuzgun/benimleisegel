@@ -77,15 +77,9 @@ public class RideService {
             throw new ResourceNotFoundException("User doesnt have a vehicle");
         }
 
-        Ride ride = new Ride();
+        Ride ride = rideMapper.mapToRide(request);
         ride.setDriver(driver);
         ride.setVehicle(driver.getVehicle());
-        ride.setOriginCity(request.originCity());
-        ride.setOriginDistrict(request.originDistrict());
-        ride.setDestinationCity(request.destinationCity());
-        ride.setDestinationDistrict(request.destinationDistrict());
-        ride.setDepartTime(request.departTime());
-        ride.setPrice(request.price());
         ride.setStatus(RideStatus.OPEN);
 
         rideRepository.save(ride);

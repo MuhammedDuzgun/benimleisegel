@@ -16,10 +16,15 @@ public class RideMapper {
 
     public Ride mapToRide(CreateRideRequestAsDriver request) {
         Ride ride = new Ride();
-        ride.setOriginCity(request.originCity());
-        ride.setOriginDistrict(request.originDistrict());
-        ride.setDestinationCity(request.destinationCity());
-        ride.setDestinationDistrict(request.destinationDistrict());
+        ride.setTitle(request.title());
+        ride.setOriginAddress(request.originAddress());
+        ride.setDestinationAddress(request.destinationAddress());
+        ride.setDistanceInMeters(request.distanceInMeters());
+        ride.setDurationInSeconds(request.durationInSeconds());
+        ride.setOriginLatitude(request.originLatitude());
+        ride.setOriginLongitude(request.originLongitude());
+        ride.setDestinationLatitude(request.destinationLatitude());
+        ride.setDestinationLongitude(request.destinationLongitude());
         ride.setDepartTime(request.departTime());
         ride.setPrice(request.price());
         return ride;
@@ -28,11 +33,16 @@ public class RideMapper {
     public RideResponse mapToRideResponse(Ride ride) {
         RideResponse rideResponse = new RideResponse(
                 ride.getId(),
+                ride.getTitle(),
                 userMapper.mapToUserResponse(ride.getDriver()),
-                ride.getOriginCity(),
-                ride.getOriginDistrict(),
-                ride.getDestinationCity(),
-                ride.getDestinationDistrict(),
+                ride.getOriginAddress(),
+                ride.getDestinationAddress(),
+                ride.getDistanceInMeters(),
+                ride.getDurationInSeconds(),
+                ride.getOriginLatitude(),
+                ride.getOriginLongitude(),
+                ride.getDestinationLatitude(),
+                ride.getDestinationLongitude(),
                 ride.getDepartTime(),
                 ride.getPrice(),
                 ride.getStatus()
